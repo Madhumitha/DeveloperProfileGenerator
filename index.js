@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
+const phantom = require('phantom');
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
@@ -86,3 +87,16 @@ async function init() {
 }
 
 init();
+
+// Create a pdf
+
+phantom.create().then(function(ph) {
+    ph.createPage().then(function(page) {
+        page.open("https://madhumitha.github.io/DeveloperProfileGenerator/").then(function(status) {
+            page.render('developerProfile.pdf').then(function() {
+                console.log('Page Rendered');
+                ph.exit();
+            });
+        });
+    });
+})
