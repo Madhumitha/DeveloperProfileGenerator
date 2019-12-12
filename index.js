@@ -2,7 +2,7 @@ const axios = require('axios');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
-const phantom = require('phantom');
+const phantom = require('puppeteer');
 
 // const got = require('got');
 
@@ -109,13 +109,12 @@ init();
 
 // Create a pdf
 
-phantom.create().then(function(ph) {
-    ph.createPage().then(function(page) {
-        page.open("https://madhumitha.github.io/DeveloperProfileGenerator/").then(function(status) {
-            page.render('developerProfile.pdf').then(function() {
-                //console.log('Page Rendered');
-                ph.exit();
-            });
-        });
-    });
-})
+const puppeteer=require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch({defaultViewport: null});
+  const page = await browser.newPage();
+  await page.goto('https://madhumitha.github.io/DeveloperProfileGenerator/', {waitUntil: 'networkidle2'});
+  await page.pdf({path: 'index.pdf', format: 'A4', printBackground:true, preferCSSPageSize: true});
+  await browser.close();
+})();
