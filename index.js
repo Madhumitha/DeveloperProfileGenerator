@@ -23,7 +23,7 @@ function promptUser() {
     ]);
 }
 
-function generateHTML(answers) {
+function generateHTML(answers, userDataGithub) {
     return `
   <!DOCTYPE html>
   <html lang="en">
@@ -52,14 +52,14 @@ function generateHTML(answers) {
 </header>
 
 <section>
-<h4> I write code for sensors and operating system </h4>
+<h4> ${userDataGithub.bio} </h4>
 <div class="row">
       <div class="col-sm-6">
               <div class="card-body">
-                      <p class="card-text">Public Repositories</p>
+                      <p class="card-text">Public Repositories : ${userDataGithub.public_repos}</p>
               </div>
               <div class="card-body">
-                      <p class="card-text">Followers</p>
+                      <p class="card-text">Followers : ${userDataGithub.followers}</p>
               </div>
       </div>
       <div class="col-sm-6">
@@ -67,7 +67,7 @@ function generateHTML(answers) {
                       <p class="card-text">GitHub Stars</p>
                </div>
                <div class="card-body">
-                      <p class="card-text">Following</p>
+                      <p class="card-text">Following : ${userDataGithub.following}</p>
               </div>
       </div>
   </div>
@@ -80,22 +80,33 @@ function generateHTML(answers) {
   </html>`;
 }
 
-function gitData(data) {
-    let gitUser = data.username;
-    const queryUrl = 'https://api.github.com/users/' + gitUser;
-    const stargazerUrl = 'https://api.github.com/users/' + gitUser + '/starred';
+function axiosTest(data) {
 
-    // Multiple concurrent requests
+        let gitUser = data.username;
+        const queryUrl = 'https://api.github.com/users/' + gitUser;
 
-    function repoURL() {
-        return  axios.get(queryUrl).then(function(res) {
-                console.log("Bio: ", res.data.bio);
-                console.log("Public repository: ", res.data.public_repos);
-                console.log("Number of followers: ", res.data.followers);
-                console.log("Number of following: ", res.data.following);
-            })
+        return axios.get(queryUrl).then(response => {
+            console.log(response.data);
+            return response.data;
+        })
     }
 
+
+        
+       // const bio = res.data.bio;
+        //  const repoPublic = res.data.public_repos;
+       // const followers = res.data.followers;
+      //  const following = res.data.following;
+
+       // console.log("Bio :", bio);
+       // console.log("Public Repository: ", repoPublic);
+       // console.log("Followers :", followers);
+       // console.log("Following :", following);
+    
+
+   // console.log(userDataGithub);
+   //const stargazerUrl = 'https://api.github.com/users/' + gitUser + '/starred';
+    
     /* TODO: Include the GitHub Stars */
     //function starURL() {
     //    return axios.get(stargazerUrl).then(function (res) {
@@ -108,18 +119,17 @@ function gitData(data) {
     //        //Both requests are now complete
     //    }))
 
-    //Function Call
-    repoURL();
-}
 
 async function init() {
     try {
-        const answers = await promptUser();  
-        gitData(answers); 
-        const html = generateHTML(answers);
-        await writeFileAsync('index.html', html);
+        const answers = await promptUser();
+        await axiosTest(answers).then(data => {
+        console.log(data);
+        const html=generateHTML(answers, data);
+        writeFileAsync('index.html', html);
         console.log("Successfully wrote to index.html");
-    } 
+    })
+}
     catch(err) {
         console.log(err);
     }
