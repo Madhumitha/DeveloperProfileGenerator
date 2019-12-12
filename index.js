@@ -1,3 +1,4 @@
+const axios = require('axios');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
@@ -11,11 +12,16 @@ function promptUser() {
             type: 'input',
             name: 'color',
             message: 'What is your favorite color, which will be used as a background color for cards : \n'
+        },
+        {
+            type: 'input',
+            name: 'username',
+            message: 'Enter your Github username: '
         }
     ]);
 }
 
-function generateHTML() {
+function generateHTML(answers) {
     return `
   <!DOCTYPE html>
   <html lang="en">
@@ -34,7 +40,7 @@ function generateHTML() {
   <h2>Hi!</h2>
   <h2> My name is MADHUMITHA PRABAKARAN !</h2>
   <h3> Currently @ Linux Kernel Developer </h3>
-  <div style="width: 500px;">
+  <div style="width: 500px; background: ${answers.color}">
     <div style="float: left; width: 200px;">Location</div>
     <div style="float: left; width: 100px;">
     <a target="_blank" href="https://github.com/Madhumitha">GitHub</a>
@@ -75,13 +81,25 @@ function generateHTML() {
 async function init() {
     try {
         const answers = await promptUser();
+        const html = generateHTML(answers);
+        const gitUser = answers.username
 
-        const html = generateHTML();
+        const queryUrl = 'https://api.github.com/users/' + gitUser;
+    
+            axios.get(queryUrl).then(function(res) {
+                console.log(res);
+                console.log(res.data.bio);
+                console.log(res.data.public_repos);
+                console.log(res.data.followers);
+                console.log(res.data.following);
+                // const repoNames = res.data
+            })
 
         await writeFileAsync('index.html', html);
 
         console.log("Successfully wrote to index.html");
-    } catch(err) {
+    } 
+    catch(err) {
         console.log(err);
     }
 }
