@@ -38,7 +38,6 @@ function generateHTML(answers, userDataGithub) {
   </head>
   <body>
   <header>
-  <img 
   <h2>Hi!</h2>
   <h2> My name is MADHUMITHA PRABAKARAN !</h2>
   <h3> Currently @ Linux Kernel Developer </h3>
