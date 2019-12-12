@@ -4,6 +4,8 @@ const fs = require('fs');
 const util = require('util');
 const phantom = require('phantom');
 
+// const got = require('got');
+
 const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptUser() {
@@ -78,25 +80,44 @@ function generateHTML(answers) {
   </html>`;
 }
 
+function gitData(data) {
+    let gitUser = data.username;
+    const queryUrl = 'https://api.github.com/users/' + gitUser;
+    const stargazerUrl = 'https://api.github.com/users/' + gitUser + '/starred';
+
+    // Multiple concurrent requests
+
+    function repoURL() {
+        return  axios.get(queryUrl).then(function(res) {
+                console.log("Bio: ", res.data.bio);
+                console.log("Public repository: ", res.data.public_repos);
+                console.log("Number of followers: ", res.data.followers);
+                console.log("Number of following: ", res.data.following);
+            })
+    }
+
+    /* TODO: Include the GitHub Stars */
+    //function starURL() {
+    //    return axios.get(stargazerUrl).then(function (res) {
+    //           console.log("Number of Stars: ", res.stargazers_count);
+    //   })
+    //}
+
+    //axios.all([repoURL(), starURL()])
+    //   .then(axios.spread(function(act, perms){
+    //        //Both requests are now complete
+    //    }))
+
+    //Function Call
+    repoURL();
+}
+
 async function init() {
     try {
-        const answers = await promptUser();
+        const answers = await promptUser();  
+        gitData(answers); 
         const html = generateHTML(answers);
-        const gitUser = answers.username
-
-        const queryUrl = 'https://api.github.com/users/' + gitUser;
-    
-            axios.get(queryUrl).then(function(res) {
-                console.log(res);
-                console.log(res.data.bio);
-                console.log(res.data.public_repos);
-                console.log(res.data.followers);
-                console.log(res.data.following);
-                // const repoNames = res.data
-            })
-
         await writeFileAsync('index.html', html);
-
         console.log("Successfully wrote to index.html");
     } 
     catch(err) {
@@ -112,7 +133,7 @@ phantom.create().then(function(ph) {
     ph.createPage().then(function(page) {
         page.open("https://madhumitha.github.io/DeveloperProfileGenerator/").then(function(status) {
             page.render('developerProfile.pdf').then(function() {
-                console.log('Page Rendered');
+                //console.log('Page Rendered');
                 ph.exit();
             });
         });
