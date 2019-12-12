@@ -90,35 +90,6 @@ function axiosTest(data) {
         })
     }
 
-
-        
-       // const bio = res.data.bio;
-        //  const repoPublic = res.data.public_repos;
-       // const followers = res.data.followers;
-      //  const following = res.data.following;
-
-       // console.log("Bio :", bio);
-       // console.log("Public Repository: ", repoPublic);
-       // console.log("Followers :", followers);
-       // console.log("Following :", following);
-    
-
-   // console.log(userDataGithub);
-   //const stargazerUrl = 'https://api.github.com/users/' + gitUser + '/starred';
-    
-    /* TODO: Include the GitHub Stars */
-    //function starURL() {
-    //    return axios.get(stargazerUrl).then(function (res) {
-    //           console.log("Number of Stars: ", res.stargazers_count);
-    //   })
-    //}
-
-    //axios.all([repoURL(), starURL()])
-    //   .then(axios.spread(function(act, perms){
-    //        //Both requests are now complete
-    //    }))
-
-
 async function init() {
     try {
         const answers = await promptUser();
