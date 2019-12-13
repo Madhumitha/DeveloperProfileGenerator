@@ -65,11 +65,14 @@ function generateHTML(answers, [ userDataGithub , { length }]) {
                     <h2> My name is MADHUMITHA PRABAKARAN !</h2>
                         <h3> Currently @ Linux Kernel Developer </h3>
                             <div style="width: 500px">
-                                <div style="float: left; width: 200px;">Location</div>
-                                    <div style="float: left; width: 100px;">
+                                <div id="map" style="float: left; width: 200px;"> Austin, Tx </div>
+                                    <div id="githubLink" style="float: left; width: 100px;">
                                             <a target="_blank" href="https://github.com/Madhumitha">GitHub</a>
                                     </div>
-                                    <br style="clear: left;" />
+                                    <div id="Blog" style:"float: right; width: 200px;">
+                                            <a target="_blank" href="https://www.yumpu.com/en/document/view/62662967/easytoons-educational-anecdotes-for-struggling-youth-exclusion-illusion">Blog</a>
+                                    </div>
+                                     <br style="clear: left;" />
                                 </div>
                             </div>
         </div>
