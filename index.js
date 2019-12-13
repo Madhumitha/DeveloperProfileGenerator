@@ -2,9 +2,6 @@ const axios = require('axios');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
-
-// const got = require('got');
-
 const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptUser() {
@@ -22,7 +19,7 @@ function promptUser() {
     ]);
 }
 
-function generateHTML(answers, userDataGithub) {
+function generateHTML(answers, [ userDataGithub , { length }]) {
     return `
   <!DOCTYPE html>
   <html lang="en">
@@ -66,7 +63,7 @@ function generateHTML(answers, userDataGithub) {
       </div>
       <div class="col-sm-6">
               <div class="card-body">
-                      <p class="card-text">GitHub Stars</p>
+                      <p class="card-text">GitHubStars : ${length} </p>
                </div>
                <div class="card-body">
                       <p class="card-text">Following : ${userDataGithub.following}</p>
@@ -84,26 +81,36 @@ function generateHTML(answers, userDataGithub) {
 
 function axiosTest(data) {
 
-        let gitUser = data.username;
-        const queryUrl = 'https://api.github.com/users/' + gitUser;
+    let gitUser = data.username;
+    const queryUrl = 'https://api.github.com/users/' + gitUser;
 
-        return axios.get(queryUrl).then(response => {
-            console.log(response.data);
-            return response.data;
-        })
-    }
+    return axios.get(queryUrl).then(response => {
+        //console.log(response.data);
+        return response.data;
+    })
+}
+
+function starGazer(data) {
+
+    let gitUser = data.username;
+    const queryUrl = 'https://api.github.com/users/' + gitUser + '/starred';
+
+    return axios.get(queryUrl).then(response => {
+        console.log(response.data);
+        return response.data;
+    })
+}
 
 async function init() {
     try {
         const answers = await promptUser();
-        await axiosTest(answers).then(data => {
-        console.log(data);
-        const html=generateHTML(answers, data);
+        const responseArray = await Promise.all([axiosTest(answers), starGazer(answers)]);
+        //console.log(responseArray);
+        const html = generateHTML(answers, responseArray);
         writeFileAsync('index.html', html);
         console.log("Successfully wrote to index.html");
-    })
-}
-    catch(err) {
+    }
+    catch (err) {
         console.log(err);
     }
 }
@@ -112,12 +119,12 @@ init();
 
 // Create a pdf
 
-const puppeteer=require('puppeteer');
+const puppeteer = require('puppeteer');
 
 (async () => {
-  const browser = await puppeteer.launch({defaultViewport: null});
-  const page = await browser.newPage();
-  await page.goto('https://madhumitha.github.io/DeveloperProfileGenerator/', {waitUntil: 'networkidle2'});
-  await page.pdf({path: 'index.pdf', format: 'A4', printBackground:true, preferCSSPageSize: true});
-  await browser.close();
+    const browser = await puppeteer.launch({ defaultViewport: null });
+    const page = await browser.newPage();
+    await page.goto('https://madhumitha.github.io/DeveloperProfileGenerator/', { waitUntil: 'networkidle2' });
+    await page.pdf({ path: 'index.pdf', format: 'A4', printBackground: true, preferCSSPageSize: true });
+    await browser.close();
 })();
