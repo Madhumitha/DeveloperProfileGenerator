@@ -2,7 +2,6 @@ const axios = require('axios');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
-const phantom = require('puppeteer');
 
 // const got = require('got');
 
@@ -38,17 +37,21 @@ function generateHTML(answers, userDataGithub) {
   </head>
   <body>
   <header>
-  <h2>Hi!</h2>
-  <h2> My name is MADHUMITHA PRABAKARAN !</h2>
-  <h3> Currently @ Linux Kernel Developer </h3>
-  <div style="width: 500px; background: ${answers.color}">
-    <div style="float: left; width: 200px;">Location</div>
-    <div style="float: left; width: 100px;">
-    <a target="_blank" href="https://github.com/Madhumitha">GitHub</a>
-    </div>
-    <br style="clear: left;" />
-    </div>
-</header>
+        <div id="overlapHead" style="background: ${answers.color}" class="container">
+            <a href="#"><img src="${userDataGithub.avatar_url}"/></a>
+                <h2>Hi!</h2>
+                    <h2> My name is MADHUMITHA PRABAKARAN !</h2>
+                        <h3> Currently @ Linux Kernel Developer </h3>
+                            <div style="width: 500px">
+                                <div style="float: left; width: 200px;">Location</div>
+                                    <div style="float: left; width: 100px;">
+                                            <a target="_blank" href="https://github.com/Madhumitha">GitHub</a>
+                                    </div>
+                                    <br style="clear: left;" />
+                                </div>
+                            </div>
+        </div>
+    </header>
 
 <section>
 <h4> ${userDataGithub.bio} </h4>
