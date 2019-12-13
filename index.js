@@ -2,7 +2,10 @@ const axios = require('axios');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
+const path = 'index.html';
+const path1 = 'index.pdf';
 const writeFileAsync = util.promisify(fs.writeFile);
+const puppeteer = require('puppeteer');
 
 function promptUser() {
     return inquirer.prompt([
@@ -17,6 +20,28 @@ function promptUser() {
             message: 'Enter your Github username: '
         }
     ]);
+}
+
+function axiosTest(data) {
+
+    let gitUser = data.username;
+    const queryUrl = 'https://api.github.com/users/' + gitUser;
+
+    return axios.get(queryUrl).then(response => {
+        //console.log(response.data);
+        return response.data;
+    })
+}
+
+function starGazer(data) {
+
+    let gitUser = data.username;
+    const queryUrl = 'https://api.github.com/users/' + gitUser + '/starred';
+
+    return axios.get(queryUrl).then(response => {
+        console.log(response.data);
+        return response.data;
+    })
 }
 
 function generateHTML(answers, [ userDataGithub , { length }]) {
@@ -79,36 +104,18 @@ function generateHTML(answers, [ userDataGithub , { length }]) {
   </html>`;
 }
 
-function axiosTest(data) {
-
-    let gitUser = data.username;
-    const queryUrl = 'https://api.github.com/users/' + gitUser;
-
-    return axios.get(queryUrl).then(response => {
-        //console.log(response.data);
-        return response.data;
-    })
-}
-
-function starGazer(data) {
-
-    let gitUser = data.username;
-    const queryUrl = 'https://api.github.com/users/' + gitUser + '/starred';
-
-    return axios.get(queryUrl).then(response => {
-        console.log(response.data);
-        return response.data;
-    })
-}
-
 async function init() {
     try {
+        if(path1){
+            fs.unlinkSync(path1);
+        }
         const answers = await promptUser();
         const responseArray = await Promise.all([axiosTest(answers), starGazer(answers)]);
-        //console.log(responseArray);
+        fs.unlinkSync(path);
         const html = generateHTML(answers, responseArray);
         writeFileAsync('index.html', html);
         console.log("Successfully wrote to index.html");
+        createPDF();
     }
     catch (err) {
         console.log(err);
@@ -119,12 +126,12 @@ init();
 
 // Create a pdf
 
-const puppeteer = require('puppeteer');
-
-(async () => {
-    const browser = await puppeteer.launch({ defaultViewport: null });
-    const page = await browser.newPage();
-    await page.goto('https://madhumitha.github.io/DeveloperProfileGenerator/', { waitUntil: 'networkidle2' });
-    await page.pdf({ path: 'index.pdf', format: 'A4', printBackground: true, preferCSSPageSize: true });
-    await browser.close();
-})();
+function createPDF() {
+    (async () => {
+        const browser = await puppeteer.launch({ defaultViewport: null });
+        const page = await browser.newPage();
+        await page.goto('file:/madhu/Bootcamp/Class/Homework/DeveloperProfileGenerator/index.html', { waitUntil: 'networkidle2' });
+        await page.pdf({ path: 'index.pdf', format: 'A4', printBackground: true, preferCSSPageSize: true });
+        await browser.close();
+    })();
+}
